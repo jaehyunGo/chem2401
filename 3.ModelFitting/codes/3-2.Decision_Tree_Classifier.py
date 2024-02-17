@@ -21,13 +21,10 @@ import sklearn
 
 
 
-df = pd.read_csv('tox21_dataset.csv')
+df = pd.read_csv('tox21_train.csv')
 # 이 주피터파일과 같은 디렉터리에 존재하는 'tox21_dataset.csv' 파일을 읽어와 df에 저장합니다.
 
-df = df.dropna(subset=['NR-AR'])
-# 'NR-AR' 열에 결측치가 존재하는 행을 제거합니다.
-#   우리가 분석하고자 하는 'NR-AR' 열에 결측치가 존재하는 행은 분석에 방해가 될 수 있기 때문에 제거합니다.
-#   결측지까지 제거된 데이터가 제공되었기 때문에 이 과정은 생략해도 됩니다.
+
 
 
 
@@ -120,11 +117,22 @@ plt.show()
 # 시각화를 출력합니다.
 
 
-confusion_matrix(y, model_pca.predict(X_pca))
-# confusion matrix를 출력합니다.
+# 테스트 데이터를 학습한 모델로 분류한 결과를 혼동 행렬로 나타냅니다. 
+
+
+df_test = pd.read_csv('tox21_test.csv')
+# 이 주피터파일과 같은 디렉터리에 존재하는 'tox21_test.csv' 파일을 읽어와 df에 저장합니다.
+X_test = df_test.iloc[:, :-1]
+# 독립 변수를 X에 저장합니다. 독립 변수는 'NR-AR' 열을 제외한 나머지 열입니다.
+y_test = df_test.iloc[:, -1]
+# 종속 변수를 y에 저장합니다. 종속 변수는 'NR-AR' 열입니다.
+
 
 
 
 # 혼동 행렬
 from sklearn.metrics import confusion_matrix
-print(confusion_matrix(y, model.predict(X)))
+# 혼동 행렬을 계산하기 위한 라이브러리를 불러옵니다.
+
+print(confusion_matrix(y_test, model.predict(X_test)))
+# 테스트 데이터의 혼동 행렬을 출력합니다.
