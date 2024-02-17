@@ -1,0 +1,113 @@
+# 데이터셋 scv 파일을 같은 경로상의 디렉터리에 두고 실행해주세요.
+
+
+
+# 라이브러리 불러오기
+import pandas as pd
+#1. pandas: 데이터를 빠르고 강력하게, 그리고 유연하고 쉽게 다룰 수 있게 해주는 데이터 분석, 증강 도구입니다.
+#    - <https://pandas.pydata.org/docs/user_guide/index.html>
+
+import numpy as np
+#2. numpy: 파이썬에서 수치 계산을 빠르게 수행할 수 있게 해주는 도구입니다.
+#    - <https://numpy.org/doc/stable/>
+
+import matplotlib.pyplot as plt
+#3. matplolib: 정적, 애니메이션, 또는 상호작용형 시각화를 생성하기 위한 포괄적인 도구입니다.
+#    - <https://matplotlib.org/stable/users/index>
+
+import sklearn
+#4. scikit-learn: 데이터 분석을 위한, 쉽고 효율적인 여러 도구를 제공합니다.
+#    - <https://scikit-learn.org/stable/user_guide.html>
+
+
+
+df = pd.read_csv('tox21_dataset.csv')
+# 이 주피터파일과 같은 디렉터리에 존재하는 'tox21_dataset.csv' 파일을 읽어와 df에 저장합니다.
+
+df = df.dropna(subset=['NR-AR'])
+# 'NR-AR' 열에 결측치가 존재하는 행을 제거합니다.
+#   우리가 분석하고자 하는 'NR-AR' 열에 결측치가 존재하는 행은 분석에 방해가 될 수 있기 때문에 제거합니다.
+#   결측지까지 제거된 데이터가 제공되었기 때문에 이 과정은 생략해도 됩니다.
+
+
+
+X = df.iloc[:, :-1]
+# 독립 변수를 X에 저장합니다. 독립 변수는 'NR-AR' 열을 제외한 나머지 열입니다.
+
+y = df.iloc[:, -1]
+# 종속 변수를 y에 저장합니다. 종속 변수는 'NR-AR' 열입니다.
+
+
+
+from sklearn.linear_model import LogisticRegression
+# 로지스틱 회귀 모델을 사용하기 위한 라이브러리를 불러옵니다.
+
+
+# 로지스틱 회귀 모델 생성
+model = LogisticRegression(penalty='l2', C=1.0, solver='liblinear', class_weight=None, random_state=42)
+# 로지스틱 회귀 모델을 생성하고, 모델을 model에 저장합니다.
+#   penalty: 'l2'로 설정하여 L2 정규화를 사용합니다.
+#   C: 1.0으로 설정하여 정규화 강도를 1.0으로 설정합니다.
+#   solver: 'liblinear'로 설정하여 작은 데이터셋에 적합한 알고리즘을 사용합니다.
+#   class_weight: None으로 설정하여 클래스 가중치를 설정하지 않습니다.
+#   random_state: 42로 설정하여 난수 발생기의 시드를 42로 설정합니다.
+
+model.fit(X, y)
+# 모델을 학습시킵니다.
+
+
+
+
+from sklearn.decomposition import PCA
+# PCA를 사용하기 위한 라이브러리를 불러옵니다.
+from sklearn.metrics import confusion_matrix
+# 혼동 행렬을 사용하기 위한 라이브러리를 불러옵니다.
+
+
+
+# PCA를 사용하여 피처를 2개로 줄이기
+pca = PCA(n_components=2)
+# PCA 객체를 생성하고, 2개의 주성분을 사용하여 PCA를 수행합니다.
+X_pca = pca.fit_transform(X)
+# PCA를 수행하고, 변환된 피처를 X_pca에 저장합니다.
+
+
+
+# 결정 트리 모델 학습
+model_pca = LogisticRegression(penalty='l2', C=1.0, solver='liblinear', class_weight=None)
+# 로지스틱 회귀 모델을 생성하고, 모델을 model_pca에 저장합니다.
+model_pca.fit(X_pca, y)
+# 모델을 학습시킵니다.
+
+
+
+# 결정 경계 시각화
+x1s = np.linspace(X_pca[:, 0].min()-0.5, X_pca[:, 0].max()+0.5, 100)
+# X_pca의 첫 번째 열의 최솟값에서 0.5를 뺀 값부터 최댓값에 0.5를 더한 값까지 100개의 구간으로 나눈 배열을 x1s에 저장합니다.
+x2s = np.linspace(X_pca[:, 1].min()-0.5, X_pca[:, 1].max()+0.5, 100)
+# X_pca의 두 번째 열의 최솟값에서 0.5를 뺀 값부터 최댓값에 0.5를 더한 값까지 100개의 구간으로 나눈 배열을 x2s에 저장합니다.
+x1, x2 = np.meshgrid(x1s, x2s)
+# x1s와 x2s를 격자로 나눈 배열을 x1, x2에 저장합니다.
+X_new = np.c_[x1.ravel(), x2.ravel()]
+# x1과 x2를 1차원 배열로 변환하고, 변환된 배열을 열로 합쳐 X_new에 저장합니다.
+y_pred = model_pca.predict(X_new).reshape(x1.shape)
+# X_new에 대한 예측값을 계산하고, 예측값을 x1의 형태로 변환하여 y_pred에 저장합니다.
+
+
+plt.contourf(x1, x2, y_pred, alpha=0.3)
+# x1, x2, y_pred를 사용하여 등고선을 그립니다.
+plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1)
+# y가 0인 행을 산점도로 그리고, 색을 파란색으로 지정합니다.
+plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1)
+# y가 1인 행을 산점도로 그리고, 색을 빨간색으로 지정합니다.
+plt.show()
+# 그래프를 출력합니다.
+
+confusion_matrix(y, model_pca.predict(X_pca))
+# 혼동 행렬을 출력합니다.
+
+
+
+# 혼동 행렬
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y, model.predict(X)))
