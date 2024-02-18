@@ -1,11 +1,11 @@
 # 최종 코드 파일(.py)
-- [ ] 3-1.Logistic_Regression.py
-- [ ] 3-2.Decision_Tree_Classifier.py  
-- [ ] 3-3.Random_Forest_Classifier.py    
-- [ ] 3-4.Gradient_Boosting_Classifier.py   
-- [ ] 3-5.XGB_Classifier.py
-- [ ] 3-6.LGBM_Classifier.py
-- [ ] 3-7.Linear_Discriminant_Analysis.py
-- [ ] 3-8.Quadratic_Discriminant_Analysis.py
-- [ ] 3-9.PLS_Regression.py   
-- [ ] 3-10.MLP_Classifier.py
+- [x] 3-1.Logistic_Regression.py
+- [x] 3-2.Decision_Tree_Classifier.py  
+- [x] 3-3.Random_Forest_Classifier.py    
+- [x] 3-4.Gradient_Boosting_Classifier.py   
+- [x] 3-5.XGB_Classifier.py
+- [x] 3-6.LGBM_Classifier.py
+- [x] 3-7.Linear_Discriminant_Analysis.py
+- [x] 3-8.Quadratic_Discriminant_Analysis.py
+- [x] 3-9.PLS_Regression.py   
+- [x] 3-10.MLP_Classifier.py
