@@ -5,13 +5,13 @@
 실제 코드를 동작시켜보기 위해선, 파이썬 파일 형식(.py)으로 되어있는 코드를 실행해야 합니다.
 
 
-- [x] 3-1.Logistic_Regression.ipynb
-- [x] 3-2.Decision_Tree_Classifier.ipynb
-- [x] 3-3.Random_Forest_Classifier.ipynb    
-- [x] 3-4.Gradient_Boosting_Classifier.ipynb   
-- [x] 3-5.XGB_Classifier.ipynb
-- [ ] 3-6.LGBM_Classifier.ipynb
-- [ ] 3-7.Linear_Discriminant_Analysis.ipynb
-- [ ] 3-8.Quadratic_Discriminant_Analysis.ipynb
-- [ ] 3-9.PLS_Regression.ipynb
-- [ ] 3-10.MLP_Classifier.ipynb
+- [x] 3-01.Logistic_Regression.ipynb
+- [x] 3-02.Decision_Tree_Classifier.ipynb
+- [x] 3-03.Random_Forest_Classifier.ipynb    
+- [x] 3-04.Gradient_Boosting_Classifier.ipynb   
+- [x] 3-05.XGB_Classifier.ipynb
+- [x] 3-06.LGBM_Classifier.ipynb
+- [x] 3-07.Linear_Discriminant_Analysis.ipynb
+- [x] 3-08.Quadratic_Discriminant_Analysis.ipynb
+- [x] 3-09.PLS_Regression.ipynb
+- [x] 3-10.MLP_Classifier.ipynb
