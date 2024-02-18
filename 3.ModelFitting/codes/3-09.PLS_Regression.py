@@ -14,30 +14,22 @@ import matplotlib.pyplot as plt
 # 모델 학습에 사용할 데이터셋을 불러옵니다.
 pd.set_option('display.max_columns', None)
 Data_PATH_train = '../../0.Data/tox21_train.csv'
-Data_PATH_test = '../../0.Data/tox21_test.csv'
 # 전처리를 완료한 데이터셋을 불러옵니다.
 # 이때, 상대 경로나 절대 경로를 지정하여 파일의 위치를 지정해주어야 합니다.
 df_train = pd.read_csv(Data_PATH_train)
-df_test = pd.read_csv(Data_PATH_train)
 # pandas 라이브러리의 read_csv 메소드를 활용하여 csv 파일을 load합니다.
 df_train
 
 
-# Train 과정에 사용할 데이터와 Test 과정에 사용할 데이터를 load한 이후, 
-# 해당 데이터 중에서 독립변수와 반응변수를 별도로 저장해줍니다.
 X_train = df_train.iloc[:, :-1]
 y_train = df_train.iloc[:,-1]
+# Train 과정에 사용할 데이터와 Test 과정에 사용할 데이터를 load한 이후, 
+# 해당 데이터 중에서 독립변수와 반응변수를 별도로 저장해줍니다.
 
-X_test = df_test.iloc[:, :-1]
-y_test = df_test.iloc[:,-1]
-
-# df_train은 X_train(독립변수), y_train(반응변수)로,
-# df_test는 X_test(독립변수), y_test(반응변수)로 분할합니다.
-
-# maccs_2열[column = 0]부터 maccs_167열[column = 165]까지는 독립변수이고, 마지막 열(NR-AR)은 반응변수(정답값)입니다.
+# df_train은 X_train(독립변수), y_train(반응변수)로 분할합니다./
+# maccs_1열[column = 0]부터 maccs_166열[column = 165]까지는 독립변수이고, 마지막 열(NR-AR)은 반응변수(정답값)입니다.
 
 print(X_train.shape, y_train.shape)
-print(X_test.shape, y_test.shape)
 
 
 ##############################################################################################################################################################
@@ -204,11 +196,20 @@ print(Matrix)
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
+Data_PATH_test = '../../0.Data/tox21_test.csv'
+df_test = pd.read_csv(Data_PATH_test)
+# 전처리를 완료한 데이터셋을 불러옵니다.
+# 이때, 상대 경로나 절대 경로를 지정하여 파일의 위치를 지정해주어야 합니다.
+
+X_test = df_test.iloc[:, :-1]
+y_test = df_test.iloc[:,-1]
+# df_test는 X_test(독립변수), y_test(반응변수)로 분할합니다.
+
 # prediction 수행
 y_pred_probs = model.predict(X_test)
 
 # ROC 곡선 계산
-fpr, tpr, thresholds = roc_curve(y_train, y_pred_probs)
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_probs)
 
 # ROC 곡선 아래 영역 (AUC) 계산
 roc_auc = auc(fpr, tpr)
@@ -235,13 +236,14 @@ print("Optimal threshold:", optimal_threshold)
 
 # 혼동 행렬
 from sklearn.metrics import confusion_matrix
+
 predict_y = model.predict(X_test)
 predict_y = np.where(predict_y > optimal_threshold, 1, 0)
 print("Confusion Matrix in Test Dataset")
-confusion_matrix(y_test, predict_y)
+print(confusion_matrix(y_test, predict_y))
 
 # 혼동행렬은 2x2 행렬로, 실제 클래스와 예측 클래스가 일치하는지 여부에 따라 4개의 값을 가집니다.
-# - 5450개의 샘플이 0으로 예측되고 실제로 0입니다. (True Negative)
-# - 115개의 샘플이 1로 예측되고 실제로 0입니다. (False Positive)
-# - 2783개의 샘플이 0으로 예측되고 실제로 1입니다. (False Negative)
-# - 2782개의 샘플이 1로 예측되고 실제로 1입니다. (True Positive)
+# - 1375개의 샘플이 0으로 예측되고 실제로 0입니다. (True Negative)
+# - 16개의 샘플이 1로 예측되고 실제로 0입니다. (False Positive)
+# - 38개의 샘플이 0으로 예측되고 실제로 1입니다. (False Negative)
+# - 24개의 샘플이 1로 예측되고 실제로 1입니다. (True Positive)
