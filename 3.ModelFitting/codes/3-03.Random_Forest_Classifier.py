@@ -39,10 +39,14 @@ y = df.iloc[:, -1]
 
 from sklearn.ensemble import RandomForestClassifier
 # 랜덤 포레스트 분류 모델을 불러옵니다.
+import matplotlib.pyplot as plt
+# 시각화를 위한 matplotlib.pyplot을 불러옵니다.
+import pandas as pd
+# 데이터프레임을 다루기 위한 pandas를 불러옵니다.
 
 
-# 로지스틱 회귀 모델 생성
-model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
+# 랜덤 포레스트 분류 모델 생성
+model = RandomForestClassifier(n_estimators=100, max_depth=2, random_state=42)
 # 랜덤 포레스트 분류 모델을 생성합니다.
 #   n_estimators: 생성할 트리의 개수입니다.
 #   max_depth: 트리의 최대 깊이입니다.
@@ -62,26 +66,10 @@ for index in range(0, 3):
     # 처음 세 개의 트리를 시각화합니다.
     plot_tree(model.estimators_[index], filled=True, feature_names=X.columns, class_names=["malignant", "benign"], rounded=True, ax=axes[index])
     #   forest.estimators_[index]: 랜덤 포레스트 모델의 index번째 트리를 불러옵니다.
+
+plt.title('The first three trees of the random forest')
 plt.show()
 # 시각화한 트리를 출력합니다.
-
-
-
-from sklearn.ensemble import RandomForestClassifier
-# 랜덤 포레스트 분류 모델을 불러옵니다.
-import matplotlib.pyplot as plt
-# 시각화를 위한 matplotlib.pyplot을 불러옵니다.
-import pandas as pd
-# 데이터프레임을 다루기 위한 pandas를 불러옵니다.
-
-
-
-# 모델 학습
-model = RandomForestClassifier()
-# 랜덤 포레스트 분류 모델을 생성합니다.
-model.fit(X, y)
-# 랜덤 포레스트 분류 모델을 학습합니다.
-
 
 
 # 변수 중요도 계산
@@ -107,7 +95,7 @@ importances_df = importances_df.sort_values('importance', ascending=False).head(
 # 시각화
 plt.figure(figsize=(10, 6))
 # 플롯 사이즈를 조정합니다.
-plt.title('Feature Importances')
+plt.title('Feature Importances of Random Forest Model')
 # 플롯 제목을 추가합니다.
 plt.barh(importances_df['feature'], importances_df['importance'], color='b', align='center')
 # 막대 그래프를 생성합니다.
@@ -157,13 +145,23 @@ y_pred = model_pca.predict(X_new).reshape(x1.shape)
 
 plt.contourf(x1, x2, y_pred, alpha=0.3)
 # x1, x2, y_pred를 사용하여 등고선을 그립니다.
-plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1)
-# y가 0인 행을 파란색으로 점으로 표시합니다.
-plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1)
-# y가 1인 행을 빨간색으로 점으로 표시합니다.
+plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1, label='NR-AR: 0')
+# y가 0인 행을 산점도로 그리고, 색을 파란색으로 지정합니다.
+plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1, label='NR-AR: 1')
+# y가 1인 행을 산점도로 그리고, 색을 빨간색으로 지정합니다.
+plt.title('Decision Boundary of Random Forest Classifier with PCA')
+# 그래프의 제목을 설정합니다.
+plt.legend(loc='upper right')
+# 범례를 표시합니다.
+plt.xlabel('Principal Component 1')
+# x축의 라벨을 설정합니다.
+plt.ylabel('Principal Component 2')
+# y축의 라벨을 설정합니다.
 plt.show()
-# 시각화를 출력합니다.
+# 그래프를 출력합니다.
 
+confusion_matrix(y, model_pca.predict(X_pca))
+# 혼동 행렬을 출력합니다.
 
 # 테스트 데이터를 학습한 모델로 분류한 결과를 혼동 행렬로 나타냅니다. 
 

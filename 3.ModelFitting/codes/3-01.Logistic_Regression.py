@@ -92,12 +92,23 @@ y_pred = model_pca.predict(X_new).reshape(x1.shape)
 
 plt.contourf(x1, x2, y_pred, alpha=0.3)
 # x1, x2, y_pred를 사용하여 등고선을 그립니다.
-plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1)
+plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1, label='NR-AR: 0')
 # y가 0인 행을 산점도로 그리고, 색을 파란색으로 지정합니다.
-plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1)
+plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1, label='NR-AR: 1')
 # y가 1인 행을 산점도로 그리고, 색을 빨간색으로 지정합니다.
+plt.title('Decision Boundary of Logistic Regression with PCA')
+# 그래프의 제목을 설정합니다.
+plt.legend(loc='upper right')
+# 범례를 표시합니다.
+plt.xlabel('Principal Component 1')
+# x축의 라벨을 설정합니다.
+plt.ylabel('Principal Component 2')
+# y축의 라벨을 설정합니다.
 plt.show()
 # 그래프를 출력합니다.
+
+confusion_matrix(y, model_pca.predict(X_pca))
+# 혼동 행렬을 출력합니다.
 
 
 

@@ -69,6 +69,8 @@ plt.xlabel('Importance')
 # x축의 라벨을 설정합니다.
 plt.ylabel('Features')
 # y축의 라벨을 설정합니다.
+plt.title('Top 10 important features of Gradient Boosting Classifier')
+# 그래프의 제목을 설정합니다.
 plt.show()
 # 그래프를 출력합니다.
 
@@ -113,12 +115,35 @@ y_pred = model_pca.predict(X_new).reshape(x1.shape)
 
 plt.contourf(x1, x2, y_pred, alpha=0.3)
 # x1, x2, y_pred를 사용하여 등고선을 그립니다.
-plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1)
-# y가 0인 행을 파란색으로 점으로 표시합니다.
-plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1)
-# y가 1인 행을 빨간색으로 점으로 표시합니다.
+plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1, label='NR-AR: 0')
+# y가 0인 행을 산점도로 그리고, 색을 파란색으로 지정합니다.
+plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1, label='NR-AR: 1')
+# y가 1인 행을 산점도로 그리고, 색을 빨간색으로 지정합니다.
+plt.title('Decision Boundary of Gradient Boosting Classifier with PCA')
+# 그래프의 제목을 설정합니다.
+plt.legend(loc='upper right')
+# 범례를 표시합니다.
+plt.xlabel('Principal Component 1')
+# x축의 라벨을 설정합니다.
+plt.ylabel('Principal Component 2')
+# y축의 라벨을 설정합니다.
 plt.show()
-# 시각화를 출력합니다.
+# 그래프를 출력합니다.
+
+confusion_matrix(y, model_pca.predict(X_pca))
+# 혼동 행렬을 출력합니다.
+
+
+# 테스트 데이터를 학습한 모델로 분류한 결과를 혼동 행렬로 나타냅니다. 
+
+
+df_test = pd.read_csv('tox21_test.csv')
+# 이 주피터파일과 같은 디렉터리에 존재하는 'tox21_test.csv' 파일을 읽어와 df에 저장합니다.
+X_test = df_test.iloc[:, :-1]
+# 독립 변수를 X에 저장합니다. 독립 변수는 'NR-AR' 열을 제외한 나머지 열입니다.
+y_test = df_test.iloc[:, -1]
+# 종속 변수를 y에 저장합니다. 종속 변수는 'NR-AR' 열입니다.
+
 
 
 # 테스트 데이터를 학습한 모델로 분류한 결과를 혼동 행렬로 나타냅니다. 

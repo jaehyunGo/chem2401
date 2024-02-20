@@ -47,26 +47,44 @@ model.fit(X, y)
 
 
 
-# 중요도 순으로 정렬
-importances = pd.Series(data=model.feature_importances_, index=X.columns)
-# 모델의 특성 중요도를 importances에 저장합니다.
-importances_sorted = importances.sort_values()
-# importances를 중요도 순으로 정렬합니다.
+from sklearn.tree import plot_tree
+# 결정 트리를 시각화하기 위한 라이브러리를 불러옵니다.
+import matplotlib.pyplot as plt
+# 시각화를 위한 라이브러리를 불러옵니다.
 
-# 상위 10개 특성만 선택
-importances_top10 = importances_sorted[-10:]
-# 중요도가 높은 상위 10개의 특성을 importances_top10에 저장합니다.
-
-plt.figure(figsize=(8, 6))
-# 그래프의 크기를 설정합니다.
-plt.barh(importances_top10.index, importances_top10.values)
-# 가로 막대 그래프를 그립니다.
-plt.xlabel('Importance')
-# x축의 라벨을 설정합니다.
-plt.ylabel('Features')
-# y축의 라벨을 설정합니다.
+plt.figure(figsize=(20,10))  # 플롯 사이즈 조정
+plot_tree(model, filled=True, feature_names=X.columns, class_names=["malignant", "benign"], rounded=True)
+# 결정 트리를 시각화합니다.
+#  filled=True: 노드의 색을 클래스에 따라 다르게 표시합니다.
+#  feature_names=X.columns: 독립 변수의 이름을 표시합니다.
+#  class_names=["malignant", "benign"]: 종속 변수의 클래스 이름을 표시합니다.
+#  rounded=True: 노드의 모양을 둥글게 표시합니다.
+plt.title("Decision Tree visualization")
 plt.show()
-# 그래프를 출력합니다.
+# 시각화를 출력합니다.
+
+
+
+from sklearn.decomposition import PCA
+# PCA를 사용하기 위한 라이브러리를 불러옵니다.
+from sklearn.metrics import confusion_matrix
+# confusion matrix를 사용하기 위한 라이브러리를 불러옵니다.
+
+
+
+# PCA를 사용하여 피처를 2개로 줄이기
+pca = PCA(n_components=2)
+# PCA를 생성하고, 2개의 주성분을 사용하도록 설정합니다.
+X_pca = pca.fit_transform(X)
+# PCA를 사용하여 X를 변환합니다.
+
+
+
+# 결정 트리 모델 학습
+model_pca = DecisionTreeClassifier(max_depth=3, random_state=42)
+# 결정 트리 모델을 생성하고, 모델을 model_pca에 저장합니다.
+model_pca.fit(X_pca, y)
+# 모델을 학습시킵니다.
 
 
 
@@ -109,12 +127,23 @@ y_pred = model_pca.predict(X_new).reshape(x1.shape)
 
 plt.contourf(x1, x2, y_pred, alpha=0.3)
 # x1, x2, y_pred를 사용하여 등고선을 그립니다.
-plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1)
-# y가 0인 행을 파란색으로 점으로 표시합니다.
-plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1)
-# y가 1인 행을 빨간색으로 점으로 표시합니다.
+plt.scatter(X_pca[:, 0][y==0], X_pca[:, 1][y==0], color='blue', alpha=0.1, label='NR-AR: 0')
+# y가 0인 행을 산점도로 그리고, 색을 파란색으로 지정합니다.
+plt.scatter(X_pca[:, 0][y==1], X_pca[:, 1][y==1], color='red', alpha=0.1, label='NR-AR: 1')
+# y가 1인 행을 산점도로 그리고, 색을 빨간색으로 지정합니다.
+plt.title('Decision Boundary of DTC with PCA')
+# 그래프의 제목을 설정합니다.
+plt.legend(loc='upper right')
+# 범례를 표시합니다.
+plt.xlabel('Principal Component 1')
+# x축의 라벨을 설정합니다.
+plt.ylabel('Principal Component 2')
+# y축의 라벨을 설정합니다.
 plt.show()
-# 시각화를 출력합니다.
+# 그래프를 출력합니다.
+
+confusion_matrix(y, model_pca.predict(X_pca))
+# 혼동 행렬을 출력합니다.
 
 
 # 테스트 데이터를 학습한 모델로 분류한 결과를 혼동 행렬로 나타냅니다. 
