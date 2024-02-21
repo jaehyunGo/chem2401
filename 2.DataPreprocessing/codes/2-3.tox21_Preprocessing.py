@@ -71,6 +71,7 @@ print(dataset.head())
 # train/test 나누기
 
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 
 # 데이터 파일 경로 설정
@@ -78,19 +79,68 @@ folder = '.'
 file = 'tox21_dataset.csv'
 path = f'{folder}/{file}'
 
+# 데이터 파일 불러오기
+df = pd.read_csv(path)
+
+# 전체 데이터 수 파악
+print('전체 데이터 갯수:', len(df.index))
+
+index_label = 'NR-AR'    # NR_AR label의 index
+
+# 각 label에 해당하는 데이터의 수 구하기
+    # loc:  인덱스(index)나 컬럼(column)의 이름을 기준으로 행과 열을 선택합니다.
+    # iloc: 위치(인덱스나 컬럼의 숫자)를 기준으로 행과 열을 선택합니다.
+label_0 = len(df.loc[df.loc[:,'NR-AR'] == 0])  # label이 0인 데이터
+label_1 = len(df.loc[df.loc[:,'NR-AR'] == 1])  # label이 1인 데이터
+label_nan = len(df[df.loc[:, index_label].isna()])  # label이 결측값인 데이터
+
+
+print('NR-AR의 각 class별 갯수')
+print('  - 0인 데이터의 수:',label_0)
+print('  - 1인 데이터의 수:',label_1)
+print('  - 결측값인 데이터의 수:',label_nan)
+print()
+
+# bar 그래프를 통해 data imbalance를 시각화
+plt.bar([0,1,2], [label_0, label_1, label_nan])
+plt.xticks([0,1,2], [0,1,'NaN'])
+plt.title(f'{index_label}')
+plt.xlabel('label')
+plt.ylabel('Num of Data')
+plt.show()
+
+index_label = 43    # 2(maccs_1) ~ 167(maccs_166) 중 선택
+
+# 각 label에 해당하는 데이터의 수 구하기
+label_0 = len(df.loc[df.iloc[:,index_label] == 0])
+label_1 = len(df.loc[df.iloc[:,index_label] == 1])
+
+print(f'maccs_{index_label}의 분포')
+print('  - 0인 데이터의 수:',label_0)
+print('  - 1인 데이터의 수:',label_1)
+print()
+
+# bar 그래프를 통해 data imbalance를 시각화
+plt.bar([0,1], [label_0, label_1])
+plt.xticks([0,1], [0,1])
+plt.title(f'{df.columns[index_label]}')
+plt.xlabel('label')
+plt.ylabel('Num of Data')
+plt.show()
+
+# 데이터 train/test 분리하기
 # 데이터 분리를 하기 위한 하이퍼 파라미터 설정
 label_idx = 0       # 학습에 사용하고 하는 label 선택 - 0 ~ 11중 선택 가능 | 0 -> NR-AR, 11 -> SR-p53
 train_size = 0.8    # train과 test의 비율을 설정
 
-# 데이터 파일 불러오기
-df = pd.read_csv(path)
-feature = df.iloc[:,1:167]          # Features (166개)
-label = df.iloc[:,167+label_idx]    # label
+
+feature = df.iloc[:,2:168]          # Features (166개)
+label = df.iloc[:,168+label_idx]    # label
 
 # label 기준으로 결측값(NaN)인 데이터 제거하기
-idx_none = df[df.iloc[:,167 + label_idx].notna()].index # 결측값이 아닌 데이터의 index
-feature = df.iloc[idx_none, 1:167]          # 필요한 데이터의 feature만 가져오기
-label = df.iloc[idx_none, 167+label_idx]    # 필요한 데이터의 label만 가져오기
+idx_none = df[df.iloc[:,168 + label_idx].notna()].index # 결측값이 아닌 데이터의 index
+feature = df.iloc[idx_none, 2:168]          # 필요한 데이터의 feature만 가져오기
+label = df.iloc[idx_none, 168+label_idx]    # 필요한 데이터의 label만 가져오기
 
 
 # 사이킷런에서 제공하는 함수를 이용하여 train과 test 데이터 분리하기
