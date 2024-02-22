@@ -236,7 +236,13 @@ from sklearn.linear_model import LogisticRegression
 # 두 번째 모델
 from sklearn.neural_network import MLPClassifier
 
-from sklearn.metrics import f1_score
+from sklearn.metrics import (
+	accuracy_score,
+	roc_auc_score,
+	recall_score,
+	precision_score,
+	f1_score
+)
 
 from tqdm import tqdm
 
@@ -399,15 +405,30 @@ print(f"best param: {best_param} \
 # 최종으로 나온 best parameter의 Logistic Regression 모델
 model = LogisticRegression(random_state = seed, **best_param)
 
-# tox21_train 데이터로 학습
-model.fit(X, y)
+
+# Stratified K-fold 객체 생성
+skf = StratifiedKFold(n_splits = 5, shuffle = True, random_state = seed)
+
+# k번 만큼 실험을 반복하며, 매 회차마다의 train 데이터를 다시 train과 validation data 범위의 index를 각각 train_index와 val_index에 저장
+for train_idx, val_idx in skf.split(X, y):
+	# train data와 validation data 생성
+	X_train, y_train = X.iloc[train_idx], y.iloc[train_idx]
+	X_val, y_val = X.iloc[val_idx], y.iloc[val_idx]
+
+	# tox21_train 데이터로 학습
+	model.fit(X_train, y_train)
 
 # tox21_test 데이터로 예측
 pred = model.predict(X_test)
+pred_score = model.predict_proba(X_test)[:, 1]
 
-# best parameter와 예측 결과의 f1_score 출력
+# best parameter와 예측 결과의 성능 지표 출력
 print(f'[test result] \
 		\nbest param: {best_param} \
+		\nprecision: {precision_score(y_test, pred):.3f} \
+		\nrecall: {recall_score(y_test, pred):.3f} \
+		\naccuracy: {accuracy_score(y_test, pred):.3f} \
+		\nauc: {roc_auc_score(y_test, pred_score):.3f} \
 		\nf1: {f1_score(y_test, pred):.3f}')
 
 # ===============================================================
@@ -555,16 +576,30 @@ print(f"best param: {best_param} \
 
 # test result 출력
 
-# 최종으로 나온 best parameter의 Logistic Regression 모델
+# 최종으로 나온 best parameter의 MLP 모델
 model = MLPClassifier(random_state = seed, **best_param)
 
-# tox21_train 데이터로 학습
-model.fit(X, y)
+# Stratified K-fold 객체 생성
+skf = StratifiedKFold(n_splits = 5, shuffle = True, random_state = seed)
+
+# k번 만큼 실험을 반복하며, 매 회차마다의 train 데이터를 다시 train과 validation data 범위의 index를 각각 train_index와 val_index에 저장
+for train_idx, val_idx in skf.split(X, y):
+	# train data와 validation data 생성
+	X_train, y_train = X.iloc[train_idx], y.iloc[train_idx]
+	X_val, y_val = X.iloc[val_idx], y.iloc[val_idx]
+
+	# tox21_train 데이터로 학습
+	model.fit(X_train, y_train)
 
 # tox21_test 데이터로 예측
 pred = model.predict(X_test)
+pred_score = model.predict_proba(X_test)[:, 1]
 
-# best parameter와 예측 결과의 f1_score 출력
+# best parameter와 예측 결과의 성능 지표 출력
 print(f'[test result] \
 		\nbest param: {best_param} \
+		\nprecision: {precision_score(y_test, pred):.3f} \
+		\nrecall: {recall_score(y_test, pred):.3f} \
+		\naccuracy: {accuracy_score(y_test, pred):.3f} \
+		\nauc: {roc_auc_score(y_test, pred_score):.3f} \
 		\nf1: {f1_score(y_test, pred):.3f}')
